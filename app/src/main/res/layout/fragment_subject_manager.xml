@@ -19,17 +19,18 @@
             android:layout_height="match_parent" />
     </RelativeLayout>
 
-    <com.getbase.floatingactionbutton.FloatingActionButton
+    <com.melnykov.fab.FloatingActionButton
         android:id="@+id/fab_create_subject"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_add_white_24dp"
         fab:fab_colorNormal="@color/orangeForButtons"
         fab:fab_colorPressed="@color/orangeForButtonsPressed"
-        fab:fab_icon="@drawable/ic_action_new"
-        fab:fab_title="Quick Compose" />
+        fab:fab_colorRipple="@color/orangeForButtons"       />
 
     <!--
         <com.getbase.floatingactionbutton.FloatingActionsMenu
