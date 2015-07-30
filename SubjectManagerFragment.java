@@ -19,7 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+//import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,7 +28,8 @@ import android.widget.Toast;
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
-import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.melnykov.fab.FloatingActionButton;
+//import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +74,7 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             }*/
             deselectAll();
             cAdapter.notifyDataSetChanged();
+            fabCreateSubject.show();
         }
 
         @Override
@@ -239,6 +241,7 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
         recList.setAdapter(cAdapter);
 
         fabCreateSubject = (FloatingActionButton) smFragmentView.findViewById(R.id.fab_create_subject);
+        fabCreateSubject.attachToRecyclerView(recList);
         fabCreateSubject.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -406,7 +409,7 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             actionMode = getActionBar().startActionMode(mEditOrDeleteMode);
             mMultiSelector.setSelectable(true);
             mMultiSelector.setSelected(this, true);
-
+            fabCreateSubject.hide();
             return true;
         }
     }
