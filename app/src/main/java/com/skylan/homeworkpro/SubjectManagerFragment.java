@@ -3,10 +3,10 @@ package com.skylan.homeworkpro;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.CardView;
@@ -25,7 +25,7 @@ import android.widget.Toast;
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
-import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,17 +68,14 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             /*for (int go = 0; go < mHolders.size(); go++) {
                 mHolders.get(go).bindCrime(mHolders.get(go).sInfo);
             }*/
+            deselectAll();
             cAdapter.notifyDataSetChanged();
+            fabCreateSubject.show();
         }
 
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             super.onCreateActionMode(actionMode, menu);
-
-            //fabCreateSubject goes away...
-            // this may require implementing a different floating action button library
-            // current library doesn't support removal on scroll, or in general I'm assuming
-
             getActivity().getMenuInflater().inflate(R.menu.menu_subject_manager, menu);
             mEditItem = actionMode.getMenu().findItem(R.id.action_edit);
             mActionMenu = actionMode.getMenu();
@@ -200,6 +197,7 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        deselectAll();
         cAdapter.notifyDataSetChanged();
     }
 
@@ -234,7 +232,8 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
         recList.setAdapter(cAdapter);
 
         fabCreateSubject = (FloatingActionButton) smFragmentView.findViewById(R.id.fab_create_subject);
-        fabCreateSubject.setOnClickListener (new View.OnClickListener() {
+        fabCreateSubject.attachToRecyclerView(recList);
+        fabCreateSubject.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -248,6 +247,13 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
                 final EditText inputSubjectGrade = (EditText) alertview.findViewById(R.id.dialog_edit_subject_card_grade);
 
                 build.setTitle("Add Subject");
+                build.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        deselectAll();
+                        recList.getAdapter().notifyDataSetChanged();
+                    }
+                });
                 build.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -260,16 +266,16 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
                             si.save();
                             subjectList.add(si);
                             mnChildItem.get(0).add(si);
-                            cAdapter.notifyDataSetChanged();
-                            mnAdapter.notifyDataSetChanged();
                             //sa.notifyDataSetChanged();
-                            recList.smoothScrollToPosition(subjectList.size()-1);
-                        } //will need to check if subject already exists, but YOLO for now.
+                            recList.smoothScrollToPosition(subjectList.size() - 1);
+                        }
+                        deselectAll();
                         dialog.cancel();
                     }
                 });
                 build.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        deselectAll();
                         dialog.cancel();
                     }
                 });
@@ -278,7 +284,9 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             }
         });
         // Inflate the layout for this fragment
+
         return smFragmentView;
+
     }
 
     public ArrayList<SubjectInfo> getSubjectInfoArrayList(){
@@ -335,17 +343,18 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             itemView.setOnLongClickListener(this);
             itemView.setLongClickable(true);
 
-
         }
         @Override
         public void setSelectable(boolean isSelectable) {
             super.setSelectable(isSelectable);
+            if (isSelectable) {
+                vSubjectLayout.setBackgroundColor(Color.WHITE);
+            }
         }
 
         @Override
         public void setActivated(boolean isActivated) {
             super.setActivated(isActivated);
-            vSubjectLayout.setBackgroundColor(Color.WHITE);
         }
 
         public void bindCrime(SubjectInfo si) {
@@ -391,7 +400,7 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             actionMode = getActionBar().startActionMode(mEditOrDeleteMode);
             mMultiSelector.setSelectable(true);
             mMultiSelector.setSelected(this, true);
-
+            fabCreateSubject.hide();
             return true;
         }
     }
@@ -409,8 +418,12 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
             SubjectInfo sInfo = subjectList.get(pos);
             holder.bindCrime(sInfo);
             mHolders.add(holder);
+            if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // Now it works on my Galaxy S6 Active :D
+                holder.setSelectionModeStateListAnimator(null);
+                holder.setDefaultModeStateListAnimator(null);
+            }
         }
-
         @Override
         public int getItemCount() {
             return subjectList.size();
