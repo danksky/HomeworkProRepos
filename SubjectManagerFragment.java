@@ -3,8 +3,6 @@ package com.skylan.homeworkpro;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,7 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-//import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,7 +26,6 @@ import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback;
 import com.bignerdranch.android.multiselector.MultiSelector;
 import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.melnykov.fab.FloatingActionButton;
-//import com.getbase.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,11 +76,6 @@ public class SubjectManagerFragment extends BaseFragment implements ActionMode.C
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             super.onCreateActionMode(actionMode, menu);
-
-            //fabCreateSubject goes away...
-            // this may require implementing a different floating action button library
-            // current library doesn't support removal on scroll, or in general I'm assuming
-
             getActivity().getMenuInflater().inflate(R.menu.menu_subject_manager, menu);
             mEditItem = actionMode.getMenu().findItem(R.id.action_edit);
             mActionMenu = actionMode.getMenu();
